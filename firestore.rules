@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        (request.auth.token.role == 'admin' || 
+         request.auth.token.email == 'admin@aurelle.com');
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Public catalog reads, Admin-only write
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Orders: Anyone can create on checkout, customers can read own orders, admin has full access
+    match /orders/{orderId} {
+      allow create: if true;
+      allow read: if isAdmin() || (isAuthenticated() && resource.data.customer.email == request.auth.token.email);
+      allow update, delete: if isAdmin();
+    }
+
+    // Users collection: Private per user, or admin
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // Newsletter subscription collection
+    match /newsletter_subscribers/{subscriberId} {
+      allow create: if true;
+      allow read, delete: if isAdmin();
+    }
+  }
+}

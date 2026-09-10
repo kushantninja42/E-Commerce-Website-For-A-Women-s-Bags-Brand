@@ -1,0 +1,6 @@
+{
+  "name": "Aurelle Atelier | Luxury Women's Handbags",
+  "description": "Premium modern women's handbag e-commerce atelier featuring handcrafted leather bags, instant color switching, seamless checkout, customer account portal, and admin management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

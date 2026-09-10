@@ -1,0 +1,109 @@
+{
+  "entities": {
+    "users": {
+      "fields": {
+        "uid": { "type": "string", "description": "User unique identifier" },
+        "email": { "type": "string", "description": "User email address" },
+        "name": { "type": "string", "description": "Full name of the user" },
+        "role": { "type": "string", "description": "User role: admin or customer" },
+        "phone": { "type": "string", "description": "Contact telephone number" },
+        "wishlist": { "type": "array", "description": "Array of saved product IDs" },
+        "createdAt": { "type": "string", "description": "Account registration timestamp" }
+      },
+      "rules": {
+        "read": "request.auth != null && (request.auth.uid == resource.data.uid || request.auth.token.role == 'admin')",
+        "write": "request.auth != null && (request.auth.uid == resource.data.uid || request.auth.token.role == 'admin')"
+      }
+    },
+    "products": {
+      "fields": {
+        "id": { "type": "string", "description": "Unique product ID" },
+        "name": { "type": "string", "description": "Product display title" },
+        "slug": { "type": "string", "description": "URL-friendly slug" },
+        "tagline": { "type": "string", "description": "Short marketing headline" },
+        "description": { "type": "string", "description": "Full product description and story" },
+        "category": { "type": "string", "description": "Bag category identifier" },
+        "price": { "type": "number", "description": "Regular base price" },
+        "salePrice": { "type": "number", "description": "Discounted promotional price if applicable" },
+        "rating": { "type": "number", "description": "Average review rating" },
+        "reviewCount": { "type": "number", "description": "Total count of approved reviews" },
+        "variants": { "type": "array", "description": "Color variations with dedicated image sets and stock" },
+        "materials": { "type": "array", "description": "List of artisanal materials" },
+        "dimensions": { "type": "string", "description": "Dimensions in centimeters" },
+        "weight": { "type": "string", "description": "Weight in grams" },
+        "isFeatured": { "type": "boolean", "description": "Whether shown on homepage featured section" },
+        "isBestseller": { "type": "boolean", "description": "Whether marked with Bestseller badge" },
+        "isNewArrival": { "type": "boolean", "description": "Whether marked as New Arrival" },
+        "isActive": { "type": "boolean", "description": "Publish status" },
+        "createdAt": { "type": "string", "description": "Creation timestamp" }
+      },
+      "rules": {
+        "read": "true",
+        "write": "request.auth != null && request.auth.token.role == 'admin'"
+      }
+    },
+    "orders": {
+      "fields": {
+        "id": { "type": "string", "description": "Unique order identifier" },
+        "createdAt": { "type": "string", "description": "Order placement timestamp" },
+        "customer": { "type": "map", "description": "Customer contact and delivery address" },
+        "items": { "type": "array", "description": "List of ordered items with selected color variation" },
+        "subtotal": { "type": "number", "description": "Order subtotal before discounts" },
+        "discount": { "type": "number", "description": "Applied discount amount" },
+        "shippingFee": { "type": "number", "description": "Calculated shipping cost" },
+        "total": { "type": "number", "description": "Final payable amount" },
+        "paymentMethod": { "type": "string", "description": "Selected payment gateway/method" },
+        "paymentStatus": { "type": "string", "description": "Status of transaction (paid, pending, etc.)" },
+        "status": { "type": "string", "description": "Order fulfillment status" },
+        "trackingNumber": { "type": "string", "description": "Shipping carrier tracking number" },
+        "statusHistory": { "type": "array", "description": "Timeline of status updates" }
+      },
+      "rules": {
+        "read": "request.auth != null && (resource.data.customer.email == request.auth.token.email || request.auth.token.role == 'admin')",
+        "create": "true",
+        "update": "request.auth != null && request.auth.token.role == 'admin'"
+      }
+    },
+    "reviews": {
+      "fields": {
+        "id": { "type": "string", "description": "Review unique identifier" },
+        "productId": { "type": "string", "description": "Target product ID" },
+        "userName": { "type": "string", "description": "Display name of the reviewer" },
+        "rating": { "type": "number", "description": "Star rating 1-5" },
+        "title": { "type": "string", "description": "Review summary heading" },
+        "comment": { "type": "string", "description": "Review narrative body" },
+        "colorPurchased": { "type": "string", "description": "Color variation customer owned" },
+        "date": { "type": "string", "description": "Review submission date" },
+        "verifiedPurchase": { "type": "boolean", "description": "Verified order confirmation" }
+      },
+      "rules": {
+        "read": "true",
+        "create": "true",
+        "write": "request.auth != null && request.auth.token.role == 'admin'"
+      }
+    },
+    "coupons": {
+      "fields": {
+        "code": { "type": "string", "description": "Voucher promotional code" },
+        "discountPercent": { "type": "number", "description": "Percentage discount rate" },
+        "discountAmount": { "type": "number", "description": "Fixed currency discount amount" },
+        "minSpend": { "type": "number", "description": "Minimum required cart value" },
+        "description": { "type": "string", "description": "Promotion conditions description" }
+      },
+      "rules": {
+        "read": "true",
+        "write": "request.auth != null && request.auth.token.role == 'admin'"
+      }
+    },
+    "newsletter_subscribers": {
+      "fields": {
+        "email": { "type": "string", "description": "Subscribed customer email" },
+        "subscribedAt": { "type": "string", "description": "Subscription timestamp" }
+      },
+      "rules": {
+        "read": "request.auth != null && request.auth.token.role == 'admin'",
+        "create": "true"
+      }
+    }
+  }
+}
